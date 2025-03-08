@@ -56,7 +56,29 @@ docker compose down -v
 ```
 
 # Résultats des tests de performance
-- **Ingestion standard (`/ingest`)** : environ 20 secondes
-- **Ingestion rapide (`/ingest-fast`)** : environ 8 secondes
 
-Ces résultats montrent que l’endpoint /ingest-fast offre des performances améliorées, permettant de traiter plus rapidement les données, ce qui est essentiel dans un environnement de production.
+La principale différence entre `/ingest` et `/ingest-fast` réside dans l’utilisation de `fast_process_csv_to_mysql()` et `fast_process_weather_data()` à la place de `process_csv_to_mysql()` et `process_weather_data()`, respectivement.
+
+L'utilisation de **ThreadPoolExecutor** a significativement amélioré la vitesse d'exécution :
+- `fast_process_csv_to_mysql()` télécharge et traite les fichiers JSON en parallèle, au lieu de les traiter un par un. Cela accélère le chargement des données depuis S3 et leur conversion en DataFrame.
+- `fast_process_weather_data()` utilise `ThreadPoolExecutor(max_workers=4)` pour traiter plusieurs villes simultanément, alors que `process_weather_data()` les traitait de manière séquentielle, ce qui était plus lent.
+
+En plus du threading, d'autres optimisations ont été apportées aux deux fonctions.
+
+## Optimisations
+
+### fast_process_csv_to_mysql()
+- Ajout de `autocommit=True` dans la connexion MySQL, évitant ainsi les `conn.commit()` manuels après chaque insertion et réduisant le temps d’exécution.
+- Optimisation de l’écriture des fichiers CSV : la version rapide regroupe et traite les fichiers de manière plus efficace, limitant les opérations séquentielles coûteuses.
+
+### fast_process_weather_data()
+- Modularisation du traitement d’une ville via une nouvelle fonction `process_city(city)`, qui est ensuite exécutée en parallèle grâce à `executor.map(process_city, cities)`, accélérant le traitement global.
+- Utilisation d'une table de hachage `(records = df.to_dict("records"))` et de `insert_many()` au lieu de `insert_one()`, ce qui réduit le nombre d’appels à MongoDB et améliore les performances.
+- Optimisation de `round_columns()` avec `df.round({col: 3 for col in columns_to_round})`, au lieu d’une modification directe des colonnes, ce qui est plus efficace.
+
+## Gains de performance
+- **Ingestion standard (`/ingest`)** : environ **20 secondes**
+- **Ingestion rapide (`/ingest-fast`)** : environ **8 secondes**
+- **Gain de performance** : **~60% de réduction du temps d’exécution**
+
+Ces résultats démontrent que l’endpoint `/ingest-fast` offre une nette amélioration des performances, rendant le traitement des données plus rapide et efficace, un atout essentiel en environnement de production.
