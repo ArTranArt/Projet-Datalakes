@@ -273,7 +273,7 @@ async def ingest_fast(file: UploadFile = File(...)):
                         db.s3_client.upload_fileobj(file_in_zip, db.bucket_name, zip_file_name)
                         process_s3_data_to_csv("raw")
                 fast_process_csv_to_mysql()
-                process_weather_data()
+                fast_process_weather_data()
 
         else:
             raise HTTPException(status_code=400, detail="Format de fichier non supporté. Accepte uniquement .json ou .zip")
