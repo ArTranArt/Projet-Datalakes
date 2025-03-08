@@ -1,10 +1,10 @@
 # Introduction
-Dans le cadre d...
+Dans le cadre de mon cours de Datalakes & Data Integration à l’EFREI, j’ai développé un projet consistant à mettre en place un Data Lake pour le traitement de données météorologiques. Ce projet vise à démontrer la mise en place d’une architecture de données moderne en intégrant plusieurs étapes du pipeline de données : extraction, transformation, stockage et exposition via une interface Streamlit. L’objectif principal est de prouver ma maîtrise des outils de Data Lake et des architectures de gestion de données.
 
 # Architecture
 ![Architecture du projet](assets/architecture.png)
 
-# Explications du code
+# Explications
 ### `run_big_fetch`: 
 On récupère les données météo de décembre 2023 sous format JSON. 
 ### `run_unpack_to_raw` :
@@ -23,47 +23,40 @@ On télécharge les fichiers JSON vers un bucket S3 simulé par LocalStack.
 - Insertion des documents dans la collection WeatherStats de MongoDB.
 
 
-# Installation et build du projet
-Prérequis : Avoir git et docker installés.
-Récupérez le code :
+# Installation et Build du Projet
+**Prérequis** : Avoir git et Docker installés.
+1. Clonez le dépôt :
+ ```
+git clone https://github.com/ArTranArt/Projet-Datalakes.git
 ```
-git clone ...
-```
-Démarrer docker
-Dans le dossier du projet, construire les containers avec :
+2. Démarrez Docker.
+3. Dans le dossier du projet, construisez les containers avec la commande :
 ```
 docker compose up --build -d
 ```
-Vérifier que tous les containers (à part `airflow-init`) tournent bien sur Docker, sinon le relancer la commande.
+4. Vérifiez que tous les containers (sauf `airflow-init`) sont bien lancés. Si nécessaire, relancez la commande.
 
-Accédez à `airflow-webserver` sur `http://localhost:8081`
-Voici le couple "identifiant:password" pour accéder au webserver: `airflow:airflow`
+5. Accédez au webserver d'Airflow via `http://localhost:8081`. Les identifiants sont: `airflow:airflow`.
 
-Lancer le DAG `datalake-pipeline` et attendez la fin de l'exécution.
-(Attention : vérifiez que les données météo sont bien présentes sur : https://public.opendatasoft.com/explore/dataset/donnees-synop-essentielles-omm. Pour une raison qui m'échappe,  il y a parfois des problèmes avec l'API comme des données manquantes).
-Vous pouvez vérifier les logs si besoin. Les données météorologiques de décembre 2023 sur plusieurs villes ont été ingérées par notre Datalake.
+6. Lancez le DAG `datalake-pipeline` et attendez la fin de l’exécution. Si des données sont manquantes, il est possible de vérifier la source des données météo sur [OpenDataSoft](https://public.opendatasoft.com/explore/dataset/donnees-synop-essentielles-omm).
 
-Accédez à `api` sur `http://localhost:8000` : vous pouvez tester les endpoints.
-Il est possible de faire de l'ingestion grâce à l'endpoint `/ingest`. Le fichier `data/ingestion/2024.json` peut être utilisé par exemple.
+7. Accédez à l'API via `http://localhost:8000` pour tester les endpoints. L’endpoint `/ingest` permet d’ingérer des données à partir du fichier data/ingestion/2024.json, tandis que l’endpoint `/ingest-fast` est plus rapide et performant.
 
-Le endpoint `/ingest-fast` est plus rapide et performant qu' `/ingest`
-Nous comparerons les résultats des tests de performance.
-
-Exécutez la commande suivante pour relancer le container `streamlit`
+8.	Pour redémarrer le container Streamlit, utilisez la commande suivante :
 ```
 docker compose restart streamlit
 ```
+
+9.	Accédez à l’interface Streamlit via `http://localhost:8501` pour analyser les données météo des villes sur une période donnée (température, pression, vent, pluie).
 Accédez à `streamlit` sur `http://localhost:8501`.
-Il est possible d'analyser les données météo des villes sur une période donnée. Les métriques sont la températion, la pression, la vitesse du vent et les fortes pluie.
 
-L'installation est terminée. 
-
-Pour unbuild le projet, n'hésitez pas à supprimer les volumes :
+10.	Pour arrêter le projet et supprimer les volumes, exécutez :
 ```
 docker compose down -v
 ```
 
-
 # Résultats des tests de performance
-ingestion : environ 20 secondes
-ingest-fast : environ 8 secondes
+- **Ingestion standard (`/ingest`)** : environ 20 secondes
+- **Ingestion rapide (`/ingest-fast`)** : environ 8 secondes
+
+Ces résultats montrent que l’endpoint /ingest-fast offre des performances améliorées, permettant de traiter plus rapidement les données, ce qui est essentiel dans un environnement de production.
