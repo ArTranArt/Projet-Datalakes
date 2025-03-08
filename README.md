@@ -21,7 +21,20 @@ On télécharge les fichiers JSON vers un bucket S3 simulé par LocalStack.
 - Pour chaque ville, exécution d’une requête SQL pour agréger les données météo (température, pression, vent, pluie) par jour.
 - Transformation des données en documents MongoDB avec une structure imbriquée (ex : température, pression, vent, pluie sous des clés distinctes).
 - Insertion des documents dans la collection WeatherStats de MongoDB.
-
+### `api.py` :
+- API FastAPI permettant d’interagir avec les données météo.
+- Connexion à S3, MySQL et MongoDB via une classe DatabaseConnections.
+- Vérification de la santé de l’API et des bases (/health).
+- Liste et récupération des fichiers depuis le bucket S3 (/raw/files).
+- Récupération des tables (villes) depuis MySQL (/staging/cities).
+- Récupération des données agrégées depuis MongoDB (/curated/cities).
+- Endpoint d’ingestion permettant d’uploader des fichiers JSON ou ZIP et de les traiter (`/ingest`).
+### `streamlit.py` :
+- Interface interactive Streamlit permettant de visualiser les données météo.
+- Connexion à l’API FastAPI pour récupérer les données.
+- Sélection d’une ville et affichage des données brutes depuis MySQL.
+- Visualisation des données agrégées depuis MongoDB.
+- Graphiques interactifs (température, pression, vent, pluie) avec Matplotlib ou Plotly.
 
 # Installation et Build du Projet
 **Prérequis** : Avoir git et Docker installés.
