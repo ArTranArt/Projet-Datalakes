@@ -1,0 +1,25 @@
+# Utiliser une image de base légère
+FROM python:3.12-slim
+
+# Définir le dossier de travail
+WORKDIR /code
+
+# Copier uniquement les dépendances API
+COPY build/reqs_api.txt /code/requirements.txt
+
+# Installer uniquement ce qui est nécessaire
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+# Copier le code de l'API
+COPY . /code
+
+# Exposer le port 8000
+EXPOSE 8000
+
+# Lancer FastAPI avec Uvicorn
+CMD ["uvicorn", "src.api:app", "--host", "0.0.0.0", "--port", "80"]
+
+
+
+
+
