@@ -1,3 +1,7 @@
+# Projet Data Lake Météorologique
+
+[![CI Data Lake Pipeline](https://github.com/ArTranArt/Projet-Datalakes/actions/workflows/ci.yml/badge.svg)](https://github.com/ArTranArt/Projet-Datalakes/actions/workflows/ci.yml)
+
 # Introduction
 Dans le cadre de mon cours de Datalakes & Data Integration à l’EFREI, j’ai développé un projet consistant à mettre en place un Data Lake pour le traitement de données météorologiques. Ce projet vise à démontrer la mise en place d’une architecture de données moderne en intégrant plusieurs étapes du pipeline de données : extraction, transformation, stockage et exposition via une interface Streamlit. L’objectif principal est de prouver ma maîtrise des outils de Data Lake et des architectures de gestion de données.
 
@@ -95,3 +99,17 @@ En plus du threading, d'autres optimisations ont été apportées aux deux fonct
 - **Gain de performance** : **~60% de réduction du temps d’exécution**
 
 Ces résultats démontrent que l’endpoint `/ingest-fast` offre une nette amélioration des performances, rendant le traitement des données plus rapide et efficace, un atout essentiel en environnement de production.
+
+# Intégration Continue (CI) & Tests Unitaires
+
+Une chaîne d'intégration continue GitHub Actions (`.github/workflows/ci.yml`) est configurée pour valider automatiquement le pipeline à chaque `git push` ou Pull Request :
+
+- **Ingestion Météo** : Validation des requêtes API SYNOP, calcul des plages temporelles et gestion d'erreurs réseau.
+- **Conformité des Schémas** : Contrôle strict de la présence des 15 variables clés (`date`, `nom`, `tc`, `pmer`, etc.) et respect des limites physiques météo.
+- **Transformations Staging** : Validation de la conversion JSON vers DataFrame et du nettoyage des identifiants de stations.
+
+### Lancer les tests localement :
+```bash
+pip install -r requirements-test.txt
+pytest tests/ -v
+```

@@ -13,22 +13,29 @@ COLUMNS_USED = ['date', 'nom', 'pmer', 'tend', 'cod_tend', 'dd', 'ff', 'td', 'u'
 CSV_OUTPUT_DIR = "/opt/airflow/data/staging/"
 
 # Connexion MySQL
-conn = pymysql.connect(
-    host="mysql",
-    port=3306,
-    user="root",
-    password="root",
-    database="staging"
-)
-cursor = conn.cursor()
+try:
+    conn = pymysql.connect(
+        host="mysql",
+        port=3306,
+        user="root",
+        password="root",
+        database="staging"
+    )
+    cursor = conn.cursor()
+except Exception as e:
+    conn = None
+    cursor = None
 
 # Connexion S3
-s3 = boto3.client(
-    "s3",
-    endpoint_url="http://localstack:4566",
-    aws_access_key_id="root",
-    aws_secret_access_key="root"
-)
+try:
+    s3 = boto3.client(
+        "s3",
+        endpoint_url="http://localstack:4566",
+        aws_access_key_id="root",
+        aws_secret_access_key="root"
+    )
+except Exception as e:
+    s3 = None
 
 # Fonctions S3
 def get_s3_objects(bucket_name, prefix=""):
