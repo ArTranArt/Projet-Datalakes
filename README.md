@@ -1,6 +1,6 @@
 # Projet Data Lake Météorologique
 
-[![CI Data Lake Pipeline](https://github.com/ArTranArt/Projet-Datalakes/actions/workflows/ci.yml/badge.svg)](https://github.com/ArTranArt/Projet-Datalakes/actions/workflows/ci.yml)
+[![CI Data Lake Pipeline](https://github.com/ArTranArt/Projet-Datalakes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ArTranArt/Projet-Datalakes/actions/workflows/ci.yml)
 
 # Introduction
 Dans le cadre de mon cours de Datalakes & Data Integration à l’EFREI, j’ai développé un projet consistant à mettre en place un Data Lake pour le traitement de données météorologiques. Ce projet vise à démontrer la mise en place d’une architecture de données moderne en intégrant plusieurs étapes du pipeline de données : extraction, transformation, stockage et exposition via une interface Streamlit. L’objectif principal est de prouver ma maîtrise des outils de Data Lake et des architectures de gestion de données.
